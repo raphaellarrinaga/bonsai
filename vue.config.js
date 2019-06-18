@@ -1,6 +1,7 @@
 module.exports = {
   runtimeCompiler: true,
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/bonsai/'
-    : '/'
+  // publicPath: process.env.NODE_ENV === 'production'
+  //   ? '/bonsai/'
+  //   : '/'
+  publicPath: '/'
 }
