@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <router-view/>
-    <footer-prismic/>
+    <!-- <footer-prismic/> -->
   </div>
 </template>
 

@@ -1,3 +1,16 @@
+# Bonsai
+
+@todo
+
+- readme
+- global css
+- cleanup BlogPosts namings
+- fix github vulnerabilities
+- fix 404 paths on page reload with github
+- favicon
+
+---
+
 # Prismic Vue.js Starter
 
 > [Vue.js](https://vuejs.org) starter project with content managed in [Prismic](https://prismic.io)

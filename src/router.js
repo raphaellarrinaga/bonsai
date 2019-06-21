@@ -15,14 +15,16 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: { name: 'bonsai-home' }
+      // redirect: { name: 'bonsai-home' }
       // redirect: { name: 'tutorial' }
-    },
-    {
-      path: '/bonsai-list',
       name: 'bonsai-home',
       component: BonsaiHome
     },
+    // {
+    //   path: '/bonsai-list',
+    //   name: 'bonsai-home',
+    //   component: BonsaiHome
+    // },
     // {
     //   path: '/bonsai/list',
     //   name: 'list',

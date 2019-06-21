@@ -1,7 +1,11 @@
 <template>
-  <div class="wrapper">
-    <h1 class="page-title">Bonsaï</h1>
-    <bonsai-posts/>
+  <div class="page">
+    <header class="page-header">
+      <h1 class="page-title"><a href="/">Bonsaï</a></h1>
+    </header>
+    <div class="page-main">
+      <bonsai-posts/>
+    </div>
   </div>
 </template>
 
@@ -17,10 +21,18 @@ export default {
 </script>
 
 <style scoped>
-.page-title {
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  border-bottom: 1px solir #ccc;
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap');
+.page {
+  font-family: 'Roboto Mono', monospace;
+  padding: 3em 1em 5em;
+}
+@media screen and (min-width: 420px) {
+  .page {
+    padding: 3em 4em 5em;
+  }
+}
+.page-main {
+  margin: 4em auto 2em;
+  max-width: 820px;
 }
 </style>
