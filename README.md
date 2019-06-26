@@ -8,6 +8,7 @@
 - fix github vulnerabilities
 - fix 404 paths on page reload with github
 - favicon
+- domaine free
 
 ---
 

@@ -6,16 +6,14 @@
       <div class="filters panel-left">
         <h1 class="filter__title">🌴🌳 Find some stuff 🌵🌴</h1>
         <div class="filter">
-          <model-select :options="titlesFilter"
-          v-model="currentTitlesFilter"
+          <model-select :options="test"
+          v-model="item"
           placeholder="Type a bonsaï name">
           </model-select>
         </div>
       </div>
 
       <div v-for="item in setStylesFilterResult" :key="item.data.uid" class="panel-right">
-        <bonsai-teaser/>
-
         <div class="bonsai">
           <div class="bonsai__summary">
             <div class="bonsai__content">
@@ -47,18 +45,27 @@
 
 <script>
 import { ModelSelect } from 'vue-search-select'
-import BonsaiTeaser from './BonsaiTeaser.vue'
 
 export default {
   name: 'bonsai-posts',
   data () {
     return {
+        options: [
+          { value: '1', text: 'aa' + ' - ' + '1' },
+          { value: '2', text: 'ab' + ' - ' + '2' },
+          { value: '3', text: 'bc' + ' - ' + '3' },
+          { value: '4', text: 'cd' + ' - ' + '4' },
+          { value: '5', text: 'de' + ' - ' + '5' }
+        ],
+        item: {
+          value: '',
+          text: ''
+        },
       posts: [],
-      titlesFilter: [],
-      currentTitlesFilter: {
-        value: 'meleze',
-        text: 'Meleze'
-      },
+      test: [],
+      selectedCategory: "All",
+      keyword: '',
+      category: '',
     }
   },
   methods: {
@@ -66,16 +73,16 @@ export default {
       //Query to get blog posts
       this.$prismic.client.query(
         this.$prismic.Predicates.at('document.type', 'bonsai'),
-        { orderings : '[my.bonsai.title]' }
+        { orderings : '[my.bonsai.date desc]' }
       ).then((response) => {
         this.posts = response.results;
       })
     },
-    // @todo don't call twice, populate this.titlesFilter with this.posts instead.
+    // @todo don't call twice, populate this.test with this.posts instead.
     setSearchSelectOptions() {
       this.$prismic.client.query(
         this.$prismic.Predicates.at('document.type', 'bonsai'),
-        { orderings : '[my.bonsai.title]' }
+        { orderings : '[my.bonsai.date desc]' }
       ).then((response) => {
         const stylesFilter = [];
         response.results.forEach(function(post) {
@@ -85,45 +92,69 @@ export default {
           };
           stylesFilter.push(cell);
         });
-        this.titlesFilter = stylesFilter;
+        this.test = stylesFilter;
       })
     },
     // vue-search-select.
     reset () {
-      this.currentTitlesFilter = {}
+      this.item = {}
+    },
+    selectFromParentComponent () {
+      // select option from parent component
+      this.item = this.options[0]
     },
   },
   components: {
-    BonsaiTeaser,
     // vue-search-select.
     ModelSelect
   },
   computed: {
+    filteredPosts: function() {
+      // @see https://codepen.io/blakewatson/pen/xEXApK.
+      var vm = this;
+      var category = vm.selectedCategory;
+
+      if (category === "All") {
+        return vm.posts;
+      } else {
+        return vm.posts.filter(function(person) {
+          return person.data.indoor === category;
+        });
+      }
+    },
     setStylesFilter() {
       return getExistingStyles(this.posts);
     },
     setStylesFilterResult() {
-      return getPostByName(this.currentTitlesFilter, this.posts)
+      const currFilter = this.item.text;
+      const truc = [];
+      this.posts.forEach(function(post) {
+        const title = post.data.title[0].text;
+        if (currFilter == title) {
+          truc.push(post);
+          // console.log(truc);
+          // return truc
+        }
+        // if (currFilter == title) return post;
+      });
+      // console.log(this.posts)
+      // return this.posts
+      return truc
     },
+    filteredByAll() {
+      return getByStyle(getPostByKeyword(this.posts, this.keyword), this.category)
+    },
+    filteredByKeyword() {
+      return getByKeyword(this.list, this.keyword)
+    },
+    filteredByCategory() {
+      return getByCategory(this.list, this.category)
+    }
   },
   created () {
     this.getPosts()
     this.setSearchSelectOptions()
   }
-}
-
-function getPostByName(item, posts) {
-  const currFilter = item.text;
-  // Need an array of item to loop on it in
-  // template, see how to avoid.
-  const renderArray = [];
-  posts.forEach(function(post) {
-    const title = post.data.title[0].text;
-    if (currFilter == title) {
-      renderArray.push(post);
-    }
-  });
-  return renderArray
 }
 
 function getExistingStyles(posts) {
@@ -136,6 +167,39 @@ function getExistingStyles(posts) {
     stylesFilter.push(cell);
   });
   return stylesFilter;
+}
+
+function getIndoor(posts, category) {
+  if (category === "All") {
+    return posts;
+  } else {
+    return posts.filter(function(person) {
+      return person.data.indoor === category;
+    });
+  }
+}
+
+function getPostByKeyword(list, keyword) {
+  const search = keyword.trim()
+  if (!search.length) return list
+  return list.filter(item => item.data.title[0].text.toLowerCase().indexOf(search) > -1)
+}
+
+
+function getByKeyword(list, keyword) {
+  const search = keyword.trim()
+  if (!search.length) return list
+  return list.filter(item => item.name.indexOf(search) > -1)
+}
+
+function getByCategory(list, category) {
+  if (!category) return list
+  return list.filter(item => item.category === category)
+}
+
+function getByStyle(posts, category) {
+  if (!category) return posts
+  return posts.filter(item => convertToId(item.data.style) === category)
 }
 
 function convertToId(str) {
@@ -215,10 +279,8 @@ function convertToId(str) {
   }
 }
 
-@media screen and (max-width: 419px) {
-  .bonsai__summary {
-    display: flex;
-  }
+.bonsai__summary {
+  display: flex;
 }
 .bonsai__content {
   flex: 1;
@@ -234,15 +296,9 @@ function convertToId(str) {
   font-size: 1.3em;
   margin-bottom: .5em;
 }
-.bonsai__figure {
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
 @media screen and (max-width: 419px) {
   .bonsai__figure {
     max-width: 120px;
-    margin-bottom: 0;
-    margin-top: 0;
   }
 }
 img {
