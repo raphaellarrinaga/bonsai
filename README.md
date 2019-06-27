@@ -1,14 +1,17 @@
 # Bonsai
 
-@todo
+A vue.js coupled with Prismic experiment.
+WIP.
 
-- readme
-- global css
-- cleanup BlogPosts namings
-- fix github vulnerabilities
-- fix 404 paths on page reload with github
+### @todos
+
+- update readme
+- set global css
+- cleanup BlogPosts naming
 - favicon
-- domaine free
+- set social networks image from github settings page.
+- ~free domain~ -> using tk domain, still has to check https.
+- _fix 404 paths on page reload with github_, only necessary if we need it later.
 
 ---
 
